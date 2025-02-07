@@ -61,8 +61,7 @@ public readonly struct Cookies(string Path) {
             if (CookiesFile is null) {
                 return false;
             }
-            CookiesFile.StoreString(JsonSerializer.Serialize(Entries, JsonOptions));
-            return true;
+            return CookiesFile.StoreString(JsonSerializer.Serialize(Entries, JsonOptions));
         }
     }
     /// <summary>
