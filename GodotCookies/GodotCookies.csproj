@@ -3,10 +3,22 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 	<LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>Godot Cookies</Title>
+    <PackageProjectUrl>https://github.com/Joy-less/GodotCookies</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>godot; cookies</PackageTags>
+    <RepositoryUrl>https://github.com/Joy-less/GodotCookies</RepositoryUrl>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="GlobalMutexSharp" Version="1.2.0" />
-    <PackageReference Include="GodotSharp" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="GlobalMutexSharp" Version="1.2.0" />
+		<PackageReference Include="GodotSharp" Version="4.3.0" />
+		<PackageReference Include="System.Text.Json" Version="9.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 </Project>

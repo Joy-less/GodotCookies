@@ -17,7 +17,7 @@ public readonly struct Cookies(string Path) {
     public string Path { get; } = Path;
 
     /// <summary>
-    /// Options to use when serializing/deserializing JSON.
+    /// The options to use when serializing/deserializing JSON.
     /// </summary>
     public JsonSerializerOptions JsonOptions { get; } = DefaultJsonOptions;
 
@@ -26,6 +26,9 @@ public readonly struct Cookies(string Path) {
     /// </summary>
     public static Cookies User { get; } = new("user://Cookies.json");
 
+    /// <summary>
+    /// The default options to use when serializing/deserializing JSON.
+    /// </summary>
     public static JsonSerializerOptions DefaultJsonOptions { get; set; } = new JsonSerializerOptions() {
         // Base
         AllowTrailingCommas = true,
