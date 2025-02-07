@@ -32,5 +32,7 @@ Cookies.User.Delete();
 ## Notes
 
 - Cookies can be removed by setting them to `null`.
-- The cookie file is automatically created upon setting the first cookie.
-- The library should not be used to store large amounts of data, since the entire file is read and rewritten every time a cookie is set.
+- Cookie files are automatically created upon setting the first cookie.
+- Cookie files are locked while in use to prevent data corruption.
+- Cookie files should not contain large amounts of data because the entire file is read and rewritten every time a cookie is set.
+- Godot types (such as `Color`) don't work well with `System.Text.Json`, so you should use a `[JsonConverter]` attribute.
