@@ -7,7 +7,7 @@ Easily store options on-device in Godot 4. This is useful for storing user setti
 Godot Cookies stores data as indented JSON making it easy to understand and edit manually.
 
 > [!NOTE]
-> Godot Cookies v1.1+ only supports Godot 4.4+ due to [a breaking change with FileAccess.StoreString](https://github.com/godotengine/godot/pull/78289).
+> Godot Cookies v1.1+ requires Godot 4.4+ due to [a breaking change with `FileAccess.StoreString`](https://github.com/godotengine/godot/pull/78289).
 
 ## Usage
 
