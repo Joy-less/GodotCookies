@@ -36,3 +36,8 @@ Cookies.User.Delete();
 - Cookie files are locked while in use to prevent data corruption.
 - Cookie files should not contain large amounts of data because the entire file is read and rewritten every time a cookie is set.
 - Godot types (such as `Color`) don't work well with `System.Text.Json`, so you should use a `[JsonConverter]` attribute.
+
+## About the name
+
+Godot Cookies is inspired by browser cookies, which are small pieces of data stored in the user's browser.
+However, they are unrelated.
