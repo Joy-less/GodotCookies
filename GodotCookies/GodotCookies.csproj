@@ -11,6 +11,9 @@
 	<PackageTags>godot; cookies</PackageTags>
 	<RepositoryUrl>https://github.com/Joy-less/GodotCookies</RepositoryUrl>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Description>Easily store options on-device in Godot 4.</Description>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="GlobalMutexSharp" Version="1.2.0" />
