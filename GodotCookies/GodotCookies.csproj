@@ -17,8 +17,8 @@
   </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="GlobalMutexSharp" Version="1.2.0" />
-	<PackageReference Include="GodotSharp" Version="4.4.0-beta.2" />
-	<PackageReference Include="System.Text.Json" Version="9.0.1" />
+	<PackageReference Include="GodotSharp" Version="4.4.0" />
+	<PackageReference Include="System.Text.Json" Version="9.0.2" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md">
