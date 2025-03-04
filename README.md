@@ -2,12 +2,9 @@
 
 [![NuGet](https://img.shields.io/nuget/v/GodotCookies.svg)](https://www.nuget.org/packages/GodotCookies)
 
-Easily store options on-device in Godot 4. This is useful for storing user settings such as volume and keybindings.
+Easily store options on-device in Godot 4.4. This is useful for storing user settings such as volume and keybindings.
 
 Godot Cookies stores data as indented JSON making it easy to understand and edit manually.
-
-> [!NOTE]
-> Godot Cookies v1.1+ requires Godot 4.4+ due to [a breaking change with `FileAccess.StoreString`](https://github.com/godotengine/godot/pull/78289).
 
 ## Usage
 
