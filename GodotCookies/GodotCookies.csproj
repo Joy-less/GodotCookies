@@ -1,25 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<VersionPrefix>1.1</VersionPrefix>
-	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-	<LangVersion>latest</LangVersion>
-	<Nullable>enable</Nullable>
-	<GenerateDocumentationFile>True</GenerateDocumentationFile>
-	<Title>Godot Cookies</Title>
-	<PackageProjectUrl>https://github.com/Joy-less/GodotCookies</PackageProjectUrl>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<PackageTags>godot; cookies</PackageTags>
-	<RepositoryUrl>https://github.com/Joy-less/GodotCookies</RepositoryUrl>
-	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<Description>Easily store options on-device in Godot 4.</Description>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <VersionPrefix>1.1</VersionPrefix>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Godot Cookies</Title>
+    <PackageProjectUrl>https://github.com/Joy-less/GodotCookies</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>godot; cookies</PackageTags>
+    <RepositoryUrl>https://github.com/Joy-less/GodotCookies</RepositoryUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>Easily store options on-device in Godot 4.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
   <ItemGroup>
-	<PackageReference Include="GlobalMutexSharp" Version="1.2.0" />
-	<PackageReference Include="GodotSharp" Version="4.4.0" />
-	<PackageReference Include="System.Text.Json" Version="9.0.2" />
+    <PackageReference Include="GlobalMutexSharp" Version="1.2.0" />
+    <PackageReference Include="GodotSharp" Version="4.4.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.2" />
   </ItemGroup>
+
   <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>
