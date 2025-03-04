@@ -8,7 +8,7 @@ using GlobalMutexSharp;
 namespace GodotCookies;
 
 /// <summary>
-/// Stores and retrieves key-value data from a file.
+/// Stores and retrieves key-value data from a JSON file.
 /// </summary>
 public readonly struct Cookies(string Path) {
     /// <summary>
