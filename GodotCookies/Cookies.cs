@@ -54,7 +54,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Stores all entries to the cookies file, overwriting if it already exists.
     /// </summary>
-    /// <returns><see langword="true"/> if successful.</returns>
+    /// <returns>
+    /// <see langword="true"/> if successful.
+    /// </returns>
     public bool SetAll(Dictionary<string, object?> Entries) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             using FileAccess? CookiesFile = FileAccess.Open(Path, FileAccess.ModeFlags.Write);
@@ -67,7 +69,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Stores an entry to the file.
     /// </summary>
-    /// <returns><see langword="true"/> if successful.</returns>
+    /// <returns>
+    /// <see langword="true"/> if successful.
+    /// </returns>
     public bool Set(string Key, object? Value) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             Dictionary<string, object?> Cookies = GetAll();
@@ -83,7 +87,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Gets all entries in the file.
     /// </summary>
-    /// <returns>The entries or an empty dictionary.</returns>
+    /// <returns>
+    /// The entries or an empty dictionary.
+    /// </returns>
     public Dictionary<string, object?> GetAll() {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             string? Cookies = FileAccess.GetFileAsString(Path);
@@ -101,7 +107,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Gets the serialised value stored with the key.
     /// </summary>
-    /// <returns>The serialised value, or <see langword="null"/>.</returns>
+    /// <returns>
+    /// The serialised value, or <see langword="null"/>.
+    /// </returns>
     public object? Get(string Key) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return GetAll().GetValueOrDefault(Key);
@@ -110,7 +118,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Gets and deserialises the value stored with the key.
     /// </summary>
-    /// <returns>The value, or <see langword="null"/>.</returns>
+    /// <returns>
+    /// The value, or <see langword="null"/>.
+    /// </returns>
     public T? Get<T>(string Key) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             object? Value = Get(Key);
@@ -123,7 +133,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Deletes the file.
     /// </summary>
-    /// <returns><see langword="true"/> if the file was deleted.</returns>
+    /// <returns>
+    /// <see langword="true"/> if the file was deleted.
+    /// </returns>
     public bool Delete() {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return DirAccess.RemoveAbsolute(Path) is Error.Ok;
@@ -132,7 +144,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Checks if the file exists.
     /// </summary>
-    /// <returns><see langword="true"/> if the file exists.</returns>
+    /// <returns>
+    /// <see langword="true"/> if the file exists.
+    /// </returns>
     public bool Exists() {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return FileAccess.FileExists(Path);
