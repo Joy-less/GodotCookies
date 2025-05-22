@@ -22,11 +22,6 @@ public readonly struct Cookies(string Path) {
     public JsonSerializerOptions JsonOptions { get; } = DefaultJsonOptions;
 
     /// <summary>
-    /// A <see cref="Cookies"/> instance for the file <c>user://Cookies.json</c>.
-    /// </summary>
-    public static Cookies User { get; } = new("user://Cookies.json");
-
-    /// <summary>
     /// The default options to use when serializing/deserializing JSON.
     /// </summary>
     public static JsonSerializerOptions DefaultJsonOptions { get; set; } = new JsonSerializerOptions() {
@@ -41,6 +36,11 @@ public readonly struct Cookies(string Path) {
         IndentCharacter = '\t',
         IndentSize = 1,
     };
+
+    /// <summary>
+    /// Gets a <see cref="Cookies"/> instance for the file <c>user://Cookies.json</c>.
+    /// </summary>
+    public static Cookies User { get; } = new("user://Cookies.json");
 
     /// <summary>
     /// A named system mutex used to lock the file.
