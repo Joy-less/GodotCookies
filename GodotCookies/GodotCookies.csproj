@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="GlobalMutexSharp" Version="1.2.0" />
     <PackageReference Include="GodotSharp" Version="4.4.1" />
-    <PackageReference Include="System.Text.Json" Version="9.0.5" />
+    <PackageReference Include="System.Text.Json" Version="9.0.6" />
   </ItemGroup>
 
   <ItemGroup>
