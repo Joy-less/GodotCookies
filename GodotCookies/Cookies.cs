@@ -88,7 +88,7 @@ public readonly struct Cookies(string Path) {
     /// Gets all entries in the file.
     /// </summary>
     /// <returns>
-    /// The entries or an empty dictionary.
+    /// The entries if successful, or an empty dictionary.
     /// </returns>
     public Dictionary<string, object?> GetAll() {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
@@ -105,10 +105,10 @@ public readonly struct Cookies(string Path) {
         }
     }
     /// <summary>
-    /// Gets the serialised value stored with the key.
+    /// Gets the serialized value stored with the key.
     /// </summary>
     /// <returns>
-    /// The serialised value, or <see langword="null"/>.
+    /// The serialized value if successful, or <see langword="null"/>.
     /// </returns>
     public object? Get(string Key) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
@@ -116,11 +116,13 @@ public readonly struct Cookies(string Path) {
         }
     }
     /// <summary>
-    /// Gets and deserialises the value stored with the key.
+    /// Gets and deserializes the value stored with the key.
     /// </summary>
     /// <returns>
-    /// The value, or <see langword="null"/>.
+    /// The value if successful, or <see langword="default"/>.
     /// </returns>
+    /// <exception cref="JsonException"/>
+    /// <exception cref="NotSupportedException"/>
     public T? Get<T>(string Key) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             object? Value = Get(Key);
