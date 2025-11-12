@@ -57,6 +57,7 @@ public readonly struct Cookies(string Path) {
     /// <returns>
     /// <see langword="true"/> if successful.
     /// </returns>
+    /// <exception cref="TimeoutException"/>
     public bool SetAll(Dictionary<string, object?> Entries) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             using FileAccess? CookiesFile = FileAccess.Open(Path, FileAccess.ModeFlags.Write);
@@ -72,6 +73,7 @@ public readonly struct Cookies(string Path) {
     /// <returns>
     /// <see langword="true"/> if successful.
     /// </returns>
+    /// <exception cref="TimeoutException"/>
     public bool Set(string Key, object? Value) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             Dictionary<string, object?> Cookies = GetAll();
@@ -90,6 +92,7 @@ public readonly struct Cookies(string Path) {
     /// <returns>
     /// The entries if successful, or an empty dictionary.
     /// </returns>
+    /// <exception cref="TimeoutException"/>
     public Dictionary<string, object?> GetAll() {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             string? Cookies = FileAccess.GetFileAsString(Path);
@@ -110,6 +113,7 @@ public readonly struct Cookies(string Path) {
     /// <returns>
     /// The serialized value if successful, or <see langword="null"/>.
     /// </returns>
+    /// <exception cref="TimeoutException"/>
     public object? Get(string Key) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return GetAll().GetValueOrDefault(Key);
@@ -121,6 +125,7 @@ public readonly struct Cookies(string Path) {
     /// <returns>
     /// The value if successful, or <see langword="default"/>.
     /// </returns>
+    /// <exception cref="TimeoutException"/>
     /// <exception cref="JsonException"/>
     /// <exception cref="NotSupportedException"/>
     public T? Get<T>(string Key) {
@@ -138,6 +143,7 @@ public readonly struct Cookies(string Path) {
     /// <returns>
     /// <see langword="true"/> if the file was deleted.
     /// </returns>
+    /// <exception cref="TimeoutException"/>
     public bool Delete() {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return DirAccess.RemoveAbsolute(Path) is Error.Ok;
@@ -149,6 +155,7 @@ public readonly struct Cookies(string Path) {
     /// <returns>
     /// <see langword="true"/> if the file exists.
     /// </returns>
+    /// <exception cref="TimeoutException"/>
     public bool Exists() {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return FileAccess.FileExists(Path);
