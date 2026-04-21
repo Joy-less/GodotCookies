@@ -10,7 +10,7 @@ namespace GodotCookies;
 /// <summary>
 /// Stores and retrieves key-value data from a JSON file.
 /// </summary>
-public readonly struct Cookies(string Path) {
+public readonly struct Cookies(string Path) : IDisposable {
     /// <summary>
     /// The path to the cookie file.
     /// </summary>
@@ -51,6 +51,12 @@ public readonly struct Cookies(string Path) {
     /// </summary>
     private readonly TimeSpan GlobalMutexTimeout = TimeSpan.FromSeconds(5);
 
+    /// <summary>
+    /// Releases the mutex and frees all resources used.
+    /// </summary>
+    public void Dispose() {
+        GlobalMutex.Dispose();
+    }
     /// <summary>
     /// Stores all entries to the cookies file, overwriting if it already exists.
     /// </summary>
