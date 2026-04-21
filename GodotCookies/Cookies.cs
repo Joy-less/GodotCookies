@@ -38,7 +38,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     };
 
     /// <summary>
-    /// Gets a <see cref="Cookies"/> instance for the file <c>user://Cookies.json</c>.
+    /// Gets a static <see cref="Cookies"/> instance for the file <c>user://Cookies.json</c>.
     /// </summary>
     public static Cookies User { get; } = new("user://Cookies.json");
 
