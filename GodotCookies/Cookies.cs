@@ -10,7 +10,7 @@ namespace GodotCookies;
 /// <summary>
 /// Stores and retrieves key-value data from a JSON file.
 /// </summary>
-public readonly struct Cookies(string Path) : IDisposable {
+public readonly struct Cookies(string Path) {
     /// <summary>
     /// The path to the cookie file.
     /// </summary>
@@ -43,20 +43,10 @@ public readonly struct Cookies(string Path) : IDisposable {
     public static Cookies User { get; } = new("user://Cookies.json");
 
     /// <summary>
-    /// A named system mutex used to lock the file.
-    /// </summary>
-    private readonly GlobalMutex GlobalMutex = new(Path);
-    /// <summary>
     /// The timeout for acquiring the global mutex.
     /// </summary>
-    private readonly TimeSpan GlobalMutexTimeout = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan GlobalMutexTimeout = TimeSpan.FromSeconds(5);
 
-    /// <summary>
-    /// Releases the mutex and frees all resources used.
-    /// </summary>
-    public void Dispose() {
-        GlobalMutex.Dispose();
-    }
     /// <summary>
     /// Stores all entries to the cookies file, overwriting if it already exists.
     /// </summary>
@@ -65,6 +55,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     /// </returns>
     /// <exception cref="TimeoutException"/>
     public bool SetAll(Dictionary<string, object?> Entries) {
+        using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             using FileAccess? CookiesFile = FileAccess.Open(Path, FileAccess.ModeFlags.Write);
             if (CookiesFile is null) {
@@ -81,6 +72,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     /// </returns>
     /// <exception cref="TimeoutException"/>
     public bool Set(string Key, object? Value) {
+        using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             Dictionary<string, object?> Cookies = GetAll();
             if (Value is not null) {
@@ -100,6 +92,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     /// </returns>
     /// <exception cref="TimeoutException"/>
     public Dictionary<string, object?> GetAll() {
+        using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             string? Cookies = FileAccess.GetFileAsString(Path);
             if (string.IsNullOrWhiteSpace(Cookies)) {
@@ -121,6 +114,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     /// </returns>
     /// <exception cref="TimeoutException"/>
     public object? Get(string Key) {
+        using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return GetAll().GetValueOrDefault(Key);
         }
@@ -135,6 +129,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     /// <exception cref="JsonException"/>
     /// <exception cref="NotSupportedException"/>
     public T? Get<T>(string Key) {
+        using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             object? Value = Get(Key);
             if (Value is null) {
@@ -151,6 +146,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     /// </returns>
     /// <exception cref="TimeoutException"/>
     public bool Delete() {
+        using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return DirAccess.RemoveAbsolute(Path) is Error.Ok;
         }
@@ -163,6 +159,7 @@ public readonly struct Cookies(string Path) : IDisposable {
     /// </returns>
     /// <exception cref="TimeoutException"/>
     public bool Exists() {
+        using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return FileAccess.FileExists(Path);
         }
