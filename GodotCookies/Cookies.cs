@@ -54,6 +54,7 @@ public readonly struct Cookies(string Path) {
     /// <see langword="true"/> if successful.
     /// </returns>
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="NotSupportedException"/>
     public bool SetAll(Dictionary<string, object?> Entries) {
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
@@ -68,10 +69,15 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Stores an entry to the file.
     /// </summary>
+    /// <remarks>
+    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the entries could not be deserialized.
+    /// </remarks>
     /// <returns>
     /// <see langword="true"/> if successful.
     /// </returns>
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="JsonException"/>
+    /// <exception cref="NotSupportedException"/>
     public bool Set(string Key, object? Value) {
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
