@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Title>Godot Cookies</Title>
     <PackageProjectUrl>https://github.com/Joy-less/GodotCookies</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>godot; cookies</PackageTags>
     <RepositoryUrl>https://github.com/Joy-less/GodotCookies</RepositoryUrl>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Easily store options on-device in Godot 4.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
