@@ -26,6 +26,8 @@ Dictionary<string, object?> Cookies = Cookies.User.GetAll();
 Remove all cookies:
 ```cs
 Cookies.User.SetAll([]);
+```
+```cs
 Cookies.User.Delete();
 ```
 
