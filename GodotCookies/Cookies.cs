@@ -57,11 +57,12 @@ public readonly struct Cookies(string Path) {
     public bool SetAll(Dictionary<string, object?> Entries) {
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
+            string EntriesJson = JsonSerializer.Serialize(Entries, JsonOptions);
             using FileAccess? CookiesFile = FileAccess.Open(Path, FileAccess.ModeFlags.Write);
             if (CookiesFile is null) {
                 return false;
             }
-            return CookiesFile.StoreString(JsonSerializer.Serialize(Entries, JsonOptions));
+            return CookiesFile.StoreString(EntriesJson);
         }
     }
     /// <summary>
