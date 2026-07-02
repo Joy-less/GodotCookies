@@ -87,10 +87,15 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Gets all entries in the file.
     /// </summary>
+    /// <remarks>
+    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the entries could not be deserialized.
+    /// </remarks>
     /// <returns>
     /// The entries if successful, or an empty dictionary.
     /// </returns>
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="JsonException"/>
+    /// <exception cref="NotSupportedException"/>
     public Dictionary<string, object?> GetAll() {
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
@@ -98,21 +103,21 @@ public readonly struct Cookies(string Path) {
             if (string.IsNullOrWhiteSpace(Cookies)) {
                 return [];
             }
-            try {
-                return JsonSerializer.Deserialize<Dictionary<string, object?>>(Cookies, JsonOptions) ?? [];
-            }
-            catch (JsonException) {
-                return [];
-            }
+            return JsonSerializer.Deserialize<Dictionary<string, object?>>(Cookies, JsonOptions) ?? [];
         }
     }
     /// <summary>
     /// Gets the serialized value stored with the key.
     /// </summary>
+    /// <remarks>
+    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the value could not be deserialized.
+    /// </remarks>
     /// <returns>
     /// The serialized value if successful, or <see langword="null"/>.
     /// </returns>
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="JsonException"/>
+    /// <exception cref="NotSupportedException"/>
     public object? Get(string Key) {
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
@@ -122,6 +127,9 @@ public readonly struct Cookies(string Path) {
     /// <summary>
     /// Gets and deserializes the value stored with the key.
     /// </summary>
+    /// <remarks>
+    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the value could not be deserialized as <typeparamref name="T"/>.
+    /// </remarks>
     /// <returns>
     /// The value if successful, or <see langword="default"/>.
     /// </returns>
