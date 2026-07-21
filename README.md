@@ -25,7 +25,7 @@ Cookies.User.Remove("Health");
 
 Get all cookies:
 ```cs
-Dictionary<string, object?> Cookies = Cookies.User.GetAll();
+JsonObject AllCookies = Cookies.User.GetAll();
 ```
 
 Delete the cookies file:
