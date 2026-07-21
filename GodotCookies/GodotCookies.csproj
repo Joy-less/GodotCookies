@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <IsAotCompatible>true</IsAotCompatible>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Title>Godot Cookies</Title>
     <PackageProjectUrl>https://github.com/Joy-less/GodotCookies</PackageProjectUrl>

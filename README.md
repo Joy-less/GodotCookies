@@ -18,24 +18,25 @@ Get a cookie:
 int Health = Cookies.User.Get<int>("Health");
 ```
 
+Remove a cookie:
+```cs
+Cookies.User.Remove("Health");
+```
+
 Get all cookies:
 ```cs
 Dictionary<string, object?> Cookies = Cookies.User.GetAll();
 ```
 
-Remove all cookies:
-```cs
-Cookies.User.SetAll([]);
-```
+Delete the cookies file:
 ```cs
 Cookies.User.Delete();
 ```
 
 ## Notes
 
-- Cookies can be removed by setting them to `null`.
 - Cookie files are automatically created upon setting the first cookie.
-- Cookie files are locked while in use to prevent data corruption.
+- Cookie files are locked while in use using a global mutex to prevent data corruption.
 - Cookie files should not contain large amounts of data because the entire file is read and rewritten every time a cookie is set.
 - Godot types (such as `Color`) don't work well with `System.Text.Json`, so you should use a `[JsonConverter]` attribute.
 

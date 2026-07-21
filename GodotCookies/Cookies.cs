@@ -1,9 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Encodings.Web;
-using Godot;
 using GlobalMutexSharp;
+using Godot;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization.Metadata;
 
 namespace GodotCookies;
 
@@ -48,109 +50,216 @@ public readonly struct Cookies(string Path) {
     private static readonly TimeSpan GlobalMutexTimeout = TimeSpan.FromSeconds(5);
 
     /// <summary>
+    /// Warning message for dynamic serialization.
+    /// </summary>
+    private const string UnreferencedCodeMessage = "JSON serialization and deserialization might require types that cannot be statically analyzed.";
+
+    /// <summary>
     /// Stores all entries to the cookies file, overwriting if it already exists.
     /// </summary>
-    /// <returns>
-    /// <see langword="true"/> if successful.
-    /// </returns>
+    /// <exception cref="ArgumentNullException" />
     /// <exception cref="TimeoutException"/>
-    /// <exception cref="NotSupportedException"/>
-    public bool SetAll(Dictionary<string, object?> Entries) {
+    /// <exception cref="System.IO.IOException" />
+    public void SetAll(JsonObject Entries) {
+        ArgumentNullException.ThrowIfNull(Entries);
+
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
-            string EntriesJson = JsonSerializer.Serialize(Entries, JsonOptions);
-            using FileAccess? CookiesFile = FileAccess.Open(Path, FileAccess.ModeFlags.Write);
-            if (CookiesFile is null) {
-                return false;
+            string EntriesJson = Entries.ToJsonString(JsonOptions);
+
+            using FileAccess CookiesFile = FileAccess.Open(Path, FileAccess.ModeFlags.Write)
+                ?? throw new System.IO.IOException("Failed to open cookies file for writing");
+
+            if (!CookiesFile.StoreString(EntriesJson)) {
+                throw new System.IO.IOException("Failed to write to cookies file");
             }
-            return CookiesFile.StoreString(EntriesJson);
         }
     }
     /// <summary>
     /// Stores an entry to the file.
     /// </summary>
-    /// <remarks>
-    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the entries could not be deserialized.
-    /// </remarks>
-    /// <returns>
-    /// <see langword="true"/> if successful.
-    /// </returns>
+    /// <exception cref="ArgumentNullException" />
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
     /// <exception cref="JsonException"/>
-    /// <exception cref="NotSupportedException"/>
-    public bool Set(string Key, object? Value) {
+    public void Set(string Key, JsonNode? Value) {
+        ArgumentNullException.ThrowIfNull(Key);
+
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
-            Dictionary<string, object?> Cookies = GetAll();
-            if (Value is not null) {
-                Cookies[Key] = Value;
-            }
-            else {
-                Cookies.Remove(Key);
-            }
-            return SetAll(Cookies);
+            JsonObject Cookies = GetAll();
+
+            Cookies[Key] = Value;
+
+            SetAll(Cookies);
+        }
+    }
+    /// <summary>
+    /// Stores an entry to the file.
+    /// </summary>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
+    /// <exception cref="JsonException"/>
+    public void Set<T>(string Key, T Value, JsonTypeInfo<T> JsonTypeInfo) {
+        ArgumentNullException.ThrowIfNull(Key);
+        ArgumentNullException.ThrowIfNull(JsonTypeInfo);
+
+        using GlobalMutex GlobalMutex = new(Path);
+        using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
+            JsonObject Cookies = GetAll();
+
+            Cookies[Key] = JsonSerializer.SerializeToNode(Value, JsonTypeInfo);
+
+            SetAll(Cookies);
+        }
+    }
+    /// <summary>
+    /// Stores an entry to the file.
+    /// </summary>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
+    /// <exception cref="JsonException"/>
+    /// <exception cref="NotSupportedException"/>
+    [RequiresUnreferencedCode(UnreferencedCodeMessage), RequiresDynamicCode(UnreferencedCodeMessage)]
+    public void Set<T>(string Key, T Value) {
+        ArgumentNullException.ThrowIfNull(Key);
+
+        using GlobalMutex GlobalMutex = new(Path);
+        using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
+            JsonObject Cookies = GetAll();
+
+            Cookies[Key] = JsonSerializer.SerializeToNode(Value, JsonOptions);
+
+            SetAll(Cookies);
+        }
+    }
+    /// <summary>
+    /// Removes an entry from the file.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the entry was found and removed.
+    /// </returns>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
+    /// <exception cref="JsonException"/>
+    public bool Remove(string Key) {
+        ArgumentNullException.ThrowIfNull(Key);
+
+        using GlobalMutex GlobalMutex = new(Path);
+        using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
+            JsonObject Cookies = GetAll();
+
+            bool Removed = Cookies.Remove(Key);
+
+            SetAll(Cookies);
+
+            return Removed;
         }
     }
     /// <summary>
     /// Gets all entries in the file.
     /// </summary>
-    /// <remarks>
-    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the entries could not be deserialized.
-    /// </remarks>
     /// <returns>
     /// The entries if successful, or an empty dictionary.
     /// </returns>
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
     /// <exception cref="JsonException"/>
-    /// <exception cref="NotSupportedException"/>
-    public Dictionary<string, object?> GetAll() {
+    public JsonObject GetAll() {
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
-            string? Cookies = FileAccess.GetFileAsString(Path);
+            if (!FileAccess.FileExists(Path)) {
+                return [];
+            }
+
+            using FileAccess CookiesFile = FileAccess.Open(Path, FileAccess.ModeFlags.Read)
+                ?? throw new System.IO.IOException("Failed to open cookies file for reading");
+
+            string? Cookies = CookiesFile.GetAsText();
             if (string.IsNullOrWhiteSpace(Cookies)) {
                 return [];
             }
-            return JsonSerializer.Deserialize<Dictionary<string, object?>>(Cookies, JsonOptions) ?? [];
+
+            return JsonNode.Parse(Cookies, documentOptions: CreateJsonDocumentOptions(JsonOptions)) as JsonObject
+                ?? throw new JsonException("Cookies file does not contain a JSON object");
         }
     }
     /// <summary>
     /// Gets the serialized value stored with the key.
     /// </summary>
-    /// <remarks>
-    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the value could not be deserialized.
-    /// </remarks>
     /// <returns>
     /// The serialized value if successful, or <see langword="null"/>.
     /// </returns>
+    /// <exception cref="ArgumentNullException" />
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
     /// <exception cref="JsonException"/>
-    /// <exception cref="NotSupportedException"/>
-    public object? Get(string Key) {
+    public JsonNode? Get(string Key, JsonNode? Default = null) {
+        ArgumentNullException.ThrowIfNull(Key);
+
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
-            return GetAll().GetValueOrDefault(Key);
+            JsonObject Cookies = GetAll();
+
+            if (!Cookies.TryGetPropertyValue(Key, out JsonNode? Value)) {
+                return Default;
+            }
+
+            return Value;
         }
     }
     /// <summary>
     /// Gets and deserializes the value stored with the key.
     /// </summary>
-    /// <remarks>
-    /// Throws a <see cref="JsonException"/> or <see cref="NotSupportedException"/> if the value could not be deserialized as <typeparamref name="T"/>.
-    /// </remarks>
     /// <returns>
     /// The value if successful, or <see langword="default"/>.
     /// </returns>
+    /// <exception cref="ArgumentNullException" />
     /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
     /// <exception cref="JsonException"/>
-    /// <exception cref="NotSupportedException"/>
-    public T? Get<T>(string Key) {
+    public T? Get<T>(string Key, JsonTypeInfo<T> JsonTypeInfo, T? Default = default) {
+        ArgumentNullException.ThrowIfNull(Key);
+        ArgumentNullException.ThrowIfNull(JsonTypeInfo);
+
         using GlobalMutex GlobalMutex = new(Path);
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
-            object? Value = Get(Key);
-            if (Value is null) {
-                return default;
+            JsonObject Cookies = GetAll();
+
+            if (!Cookies.TryGetPropertyValue(Key, out JsonNode? Value)) {
+                return Default;
             }
-            return JsonSerializer.SerializeToElement(Value, JsonOptions).Deserialize<T>(JsonOptions);
+
+            return JsonSerializer.Deserialize(Value, JsonTypeInfo);
+        }
+    }
+    /// <summary>
+    /// Gets and deserializes the value stored with the key.
+    /// </summary>
+    /// <returns>
+    /// The value if successful, or <see langword="default"/>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="TimeoutException"/>
+    /// <exception cref="System.IO.IOException" />
+    /// <exception cref="JsonException"/>
+    /// <exception cref="NotSupportedException"/>
+    [RequiresUnreferencedCode(UnreferencedCodeMessage), RequiresDynamicCode(UnreferencedCodeMessage)]
+    public T? Get<T>(string Key, T? Default = default) {
+        ArgumentNullException.ThrowIfNull(Key);
+
+        using GlobalMutex GlobalMutex = new(Path);
+        using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
+            JsonObject Cookies = GetAll();
+
+            if (!Cookies.TryGetPropertyValue(Key, out JsonNode? Value)) {
+                return Default;
+            }
+
+            return JsonSerializer.Deserialize<T>(Value, JsonOptions);
         }
     }
     /// <summary>
@@ -178,5 +287,14 @@ public readonly struct Cookies(string Path) {
         using (GlobalMutex.Acquire(GlobalMutexTimeout)) {
             return FileAccess.FileExists(Path);
         }
+    }
+
+    private static JsonDocumentOptions CreateJsonDocumentOptions(JsonSerializerOptions JsonOptions) {
+        return new JsonDocumentOptions() {
+            AllowDuplicateProperties = JsonOptions.AllowDuplicateProperties,
+            AllowTrailingCommas = JsonOptions.AllowTrailingCommas,
+            CommentHandling = JsonOptions.ReadCommentHandling,
+            MaxDepth = JsonOptions.MaxDepth,
+        };
     }
 }
