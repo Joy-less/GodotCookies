@@ -2,6 +2,7 @@ using GlobalMutexSharp;
 using Godot;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -123,6 +124,7 @@ public readonly struct Cookies(string Path) {
     /// <exception cref="JsonException"/>
     /// <exception cref="NotSupportedException"/>
     [RequiresUnreferencedCode(UnreferencedCodeMessage), RequiresDynamicCode(UnreferencedCodeMessage)]
+    [OverloadResolutionPriority(-1)]
     public void Set<T>(string Key, T Value) {
         ArgumentNullException.ThrowIfNull(Key);
 
@@ -248,6 +250,7 @@ public readonly struct Cookies(string Path) {
     /// <exception cref="JsonException"/>
     /// <exception cref="NotSupportedException"/>
     [RequiresUnreferencedCode(UnreferencedCodeMessage), RequiresDynamicCode(UnreferencedCodeMessage)]
+    [OverloadResolutionPriority(-1)]
     public T? Get<T>(string Key, T? Default = default) {
         ArgumentNullException.ThrowIfNull(Key);
 
